@@ -1,0 +1,11 @@
+{
+  "name": "Freedon 1",
+  "description": "Herzlichen Glückwunsch zu deinem NFT! Dieses NFT ist ein Symbol für deine Treue und Unterstützung.",
+  "image": "ipfs://bafybeiccyc22ttwbbtqbyuvznmw5of6ffnqxww3zahyb664thkzqlge4su",
+  "attributes": [
+    {
+      "trait_type": "1 Year Holder",
+      "value": "Treue-Bonus"
+    }
+  ]
+}

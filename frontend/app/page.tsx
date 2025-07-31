@@ -1,28 +1,27 @@
-// frontend/app/page.tsx
-// frontend/app/page.tsx
-"use client"; // Diese Seite muss jetzt eine Client-Komponente sein
+"use client";
 
 import { ConnectButton } from "../components/ConnectButton";
-import { useEffect, useState } from "react"; // <-- Importieren
+import { Dashboard } from "../components/Dashboard";
+import { useAccount } from "wagmi";
 
 export default function Home() {
-  // Ein State, um zu wissen, ob die Seite im Browser geladen ist
-  const [isClient, setIsClient] = useState(false);
-
-  // Dieser Effekt läuft nur einmal im Browser, nachdem die Seite geladen wurde
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const { isConnected } = useAccount();
 
   return (
-    <main style={{ padding: '2rem' }}>
-      <h1>Willkommen zu deinem FreedomProject</h1>
-      <p>Bitte verbinde dein Wallet, um zu starten.</p>
+    <main className="container mx-auto p-4 md:p-8">
+      <header className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl md:text-4xl font-bold text-white">FreedomProject</h1>
+        <ConnectButton />
+      </header>
       
-      <div style={{ marginTop: '1rem' }}>
-        {/* Zeige den Button erst an, wenn wir sicher im Browser sind */}
-        {isClient && <ConnectButton />}
-      </div>
+      {isConnected ? (
+        <Dashboard />
+      ) : (
+        <div className="text-center mt-20">
+          <h2 className="text-3xl font-semibold text-white">Willkommen</h2>
+          <p className="text-gray-400 mt-2">Bitte verbinde dein Wallet, um das Dashboard zu sehen.</p>
+        </div>
+      )}
     </main>
   );
 }

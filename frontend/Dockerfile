@@ -5,14 +5,15 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package files and install dependencies
+# Use --legacy-peer-deps to avoid issues with wagmi's dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy application code
 COPY . .
 
 # Expose port
-EXPOSE 5000
+EXPOSE 3000
 
 # Start command
-CMD ["node", "server.js"]
+CMD ["npm", "run", "dev"]

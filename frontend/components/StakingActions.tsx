@@ -1,42 +1,35 @@
-import {
-  fTokenAbi,
-  stakingAbi,
-  rewardManagerAbi,
-  treasuryAbi,
-  tokenVestingAbi // Annahme, dass du diese ABI auch in abis.ts hast
-} from './abis';
+// frontend/components/StakingActions.tsx
+"use client";
 
-// Definiere die neuen, verifizierten Adressen an einem Ort
-const addresses = {
-  fToken: '0xe93BCD441452E75D7ED88174a205a9DcCc6FAc36',
-  staking: '0x938C0EAD6aEF71Da9827194C81E6EaDE4D12D273',
-  rewardManager: '0x96Febf5384B0C5c2A6800170865bfdE1864c8F0c',
-  treasury: '0xC07a2D56CcD1aaFD23a1611c9a3022E478B6fd0',
-  tokenVesting: '0x4FA12941f9A8F3C7ca146c8c3903d9eAba770AEc',
-} as const;
+import { useWriteContract } from 'wagmi';
+import { STAKING_ABI } from '@/lib/abi'; // <-- KORREKTER IMPORT
+import { parseEther } from 'viem';
 
-// Erstelle und exportiere die fertigen Vertrags-Objekte
-export const fTokenContract = {
-  address: addresses.fToken,
-  abi: fTokenAbi,
-};
+// Die Adresse deines Staking-Vertrags
+const STAKING_CONTRACT_ADDRESS = '0xDEINE_STAKING_VERTRAGSADRESSE';
 
-export const stakingContract = {
-  address: addresses.staking,
-  abi: stakingAbi,
-};
+export function StakingActions() {
+  const { writeContract, isPending } = useWriteContract();
 
-export const rewardManagerContract = {
-  address: addresses.rewardManager,
-  abi: rewardManagerAbi,
-};
+  const handleStake = () => {
+    writeContract({
+      address: STAKING_CONTRACT_ADDRESS,
+      abi: STAKING_ABI,
+      functionName: 'stake',
+      args: [parseEther('100')], // Beispiel: 100 Token staken
+    });
+  };
 
-export const treasuryContract = {
-  address: addresses.treasury,
-  abi: treasuryAbi,
-};
-
-export const tokenVestingContract = {
-  address: addresses.tokenVesting,
-  abi: tokenVestingAbi,
-};
+  return (
+    <div className="p-4 border border-gray-700 rounded-lg">
+      <h3 className="text-xl font-bold mb-4">Aktionen</h3>
+      <button
+        onClick={handleStake}
+        disabled={isPending}
+        className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-500"
+      >
+        {isPending ? 'Stake wird verarbeitet...' : '100 Token staken'}
+      </button>
+    </div>
+  );
+}

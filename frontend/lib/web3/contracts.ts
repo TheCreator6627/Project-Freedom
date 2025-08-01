@@ -1,43 +1,17 @@
-// Diese Datei wird automatisch generiert. Nicht manuell bearbeiten.
+// frontend/lib/contracts.ts
 
-import {
-  fAbi,
-  stakingAbi,
-  rewardManagerAbi,
-  treasuryAbi,
-  tokenVestingAbi,
-} from './abis';
+// ABIs aus den Truffle-Artefakten importieren
+import FTokenArtifact from "../../build/contracts/F.json";
+import StakingArtifact from "../../build/contracts/Staking.json";
+import TreasuryArtifact from "../../build/contracts/Treasury.json";
 
-const addresses = {
-  f: '0xe93BCD441452E75D7ED88174a205a9DcCc6FAc36',
-  staking: '0x938C0EAD6aEF71Da9827194C81E6EaDE4D12D273',
-  rewardManager: '0x96Febf5384B0C5c2A6800170865bfdE1864c8F0c',
-  treasury: '0xC07a2D56CcD1aaFD23a1611c9a3022E478B6fd0',
-  tokenVesting: '0x4FA12941f9A8F3C7ca146c8c3903d9eAba770AEc',
-} as const;
+// --- HIER DEINE DEPLOYTEN ADRESSEN EINTRAGEN ---
+export const F_TOKEN_ADDRESS = "0xDeine_FToken_Adresse_hier";
+export const STAKING_ADDRESS = "0xDeine_Staking_Adresse_hier";
+export const TREASURY_ADDRESS = "0xDeine_Treasury_Adresse_hier";
+// ---------------------------------------------
 
-export const fContract = {
-  address: addresses.f,
-  abi: fAbi,
-};
-
-export const stakingContract = {
-  address: addresses.staking,
-  abi: stakingAbi,
-};
-
-export const rewardManagerContract = {
-  address: addresses.rewardManager,
-  abi: rewardManagerAbi,
-};
-
-export const treasuryContract = {
-  address: addresses.treasury,
-  abi: treasuryAbi,
-};
-
-export const tokenVestingContract = {
-  address: addresses.tokenVesting,
-  abi: tokenVestingAbi,
-};
-
+// ABIs für die App exportieren
+export const F_TOKEN_ABI = FTokenArtifact.abi;
+export const STAKING_ABI = StakingArtifact.abi;
+export const TREASURY_ABI = TreasuryArtifact.abi;

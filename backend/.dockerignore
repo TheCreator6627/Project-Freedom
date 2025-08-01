@@ -18,3 +18,20 @@ coverage
 *.zip
 *.tar
 *.tar.gz
+# Lokale Abhängigkeiten
+node_modules
+
+# Git-Ordner
+.git
+
+# Build-Ordner
+.next/
+build/
+dist/
+
+# Geheime Umgebungsvariablen
+.env
+.env.local
+
+# Log-Dateien
+npm-debug.log*

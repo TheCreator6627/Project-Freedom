@@ -10,10 +10,10 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true, // <-- WICHTIG für JSON-Importe
     "module": "esnext",
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
+    "resolveJsonModule": true, // <-- WICHTIG für JSON-Importe
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
@@ -22,11 +22,12 @@
         "name": "next"
       }
     ],
+    // Annahme: Du nutzt eine 'src'-Ordner-Struktur. Falls nicht, ändere "src/*" zu "./*".
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./*"
-      ] // Korrekt für eine Struktur ohne 'src'
+        "src/*"
+      ]
     }
   },
   "include": [

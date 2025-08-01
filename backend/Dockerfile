@@ -1,18 +1,18 @@
-# Base image
+# 1. Basis-Image auswählen
 FROM node:18-alpine
 
-# Set working directory
+# 2. Arbeitsverzeichnis im Container festlegen
 WORKDIR /app
 
-# Copy package files and install dependencies
+# 3. ZUERST nur die package-Dateien kopieren
 COPY package*.json ./
+
+# 4. Abhängigkeiten installieren
+# Auch hier wird der Schritt nur bei Änderungen an der package.json wiederholt.
 RUN npm install
 
-# Copy application code
+# 5. DANACH den gesamten restlichen Code kopieren
 COPY . .
 
-# Expose port
-EXPOSE 5000
-
-# Start command
+# 6. Den Server starten
 CMD ["node", "server.js"]

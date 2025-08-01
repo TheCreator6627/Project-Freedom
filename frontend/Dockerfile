@@ -1,19 +1,22 @@
-# Base image
+# 1. Basis-Image auswählen
 FROM node:18-alpine
 
-# Set working directory
+# 2. Arbeitsverzeichnis im Container festlegen
 WORKDIR /app
 
-# Copy package files and install dependencies
-# Use --legacy-peer-deps to avoid issues with wagmi's dependencies
+# 3. ZUERST nur die package-Dateien kopieren
+# Dieser Schritt ist entscheidend für das Caching.
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
 
-# Copy application code
+# 4. Abhängigkeiten installieren
+# Dieser langsame Schritt wird nur ausgeführt, wenn sich die package.json ändert.
+RUN npm install
+
+# 5. DANACH den gesamten restlichen Code kopieren
 COPY . .
 
-# Expose port
-EXPOSE 3000
+# 6. Die Next.js-Anwendung für die Produktion bauen
+RUN npm run build
 
-# Start command
-CMD ["npm", "run", "dev"]
+# 7. Den optimierten Next.js-Server starten
+CMD ["npm", "start"]

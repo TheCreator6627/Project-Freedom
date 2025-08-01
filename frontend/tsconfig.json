@@ -26,7 +26,7 @@
     "paths": {
       "@/*": [
         "./*"
-      ]
+      ] // Korrekt für eine Struktur ohne 'src'
     }
   },
   "include": [

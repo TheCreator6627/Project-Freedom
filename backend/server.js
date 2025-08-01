@@ -20,3 +20,13 @@ app.use("/api/allowlist", require("./routes/allowlist"));
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => logger.info(`🚀 Server läuft auf Port ${PORT}`));
+// ... (alle Imports von vorher)
+const logger = require('./utils/logger');
+
+// Jobs und Worker initialisieren
+require('./jobs/worker'); // Startet den Worker, damit er auf Jobs lauscht
+require('./jobs/snapshotJob').start(); // Startet den geplanten Cron-Job
+
+// ... (Rest der server.js wie app.use(cors), etc.)
+
+app.listen(PORT, () => logger.info(`🚀 Server läuft auf Port ${PORT}`));

@@ -1,76 +1,86 @@
-// backend/routes/admin.js
-
 const express = require("express");
 const router = express.Router();
-const { generateMerkleTree } = require("../merkle/generator");
-const MerkleRoot = require("../models/MerkleRoot");
-const { protectAdmin } = require("../middleware/auth"); // Middleware importieren
+const multer = require("multer");
+const csv = require("csv-parser");
+const stream = require("stream");
+const logger = require("../utils/logger");
+const { protectAdmin } = require("../middleware/auth");
+const { snapshotQueue } = require("../jobs/queue");
+const MerkleRoot = require("../models/merkleRoot");
 
-// Alle Routen in dieser Datei werden jetzt durch die protectAdmin-Funktion geschützt
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Schütze alle Routen in dieser Datei
 router.use(protectAdmin);
 
-/**
- * @route   POST api/admin/generate-merkle
- * @desc    Generiert einen Merkle Tree, speichert den Root und die Adressen
- * @access  Private (Admin)
- */
+// POST /api/admin/upload-allowlist
+router.post("/upload-allowlist", upload.single("allowlistFile"), (req, res) => {
+  const { name } = req.body;
+  if (!req.file || !name) {
+    return res.status(400).json({ msg: "Name und Datei sind erforderlich." });
+  }
+
+  const walletAddresses = [];
+  const readableStream = new stream.Readable();
+  readableStream._read = () => {};
+  readableStream.push(req.file.buffer);
+  readableStream.push(null);
+
+  readableStream
+    .pipe(csv({ headers: false }))
+    .on("data", (row) => {
+      walletAddresses.push(row[0].trim().toLowerCase());
+    })
+    .on("end", async () => {
+      try {
+        await snapshotQueue.add("generate-root-from-csv", {
+          name,
+          walletAddresses,
+        });
+        res
+          .status(202)
+          .json({
+            msg: `Job akzeptiert. ${walletAddresses.length} Adressen werden im Hintergrund verarbeitet.`,
+          });
+      } catch (err) {
+        logger.error(err, "Fehler beim Hinzufügen des Upload-Jobs zur Queue.");
+        res.status(500).send("Server-Fehler");
+      }
+    });
+});
+
+// POST /api/admin/generate-merkle
 router.post("/generate-merkle", async (req, res) => {
   const { name, walletAddresses } = req.body;
-
-  // Validierung der Eingabe
-  if (
-    !name ||
-    !walletAddresses ||
-    !Array.isArray(walletAddresses) ||
-    walletAddresses.length === 0
-  ) {
+  if (!name || !walletAddresses || !Array.isArray(walletAddresses)) {
     return res
       .status(400)
-      .json({ msg: "Bitte einen Namen und eine Liste von Adressen angeben." });
+      .json({ msg: "Name und Adressliste sind erforderlich." });
   }
 
   try {
-    // Prüfen, ob bereits ein Root mit diesem Namen existiert
-    let existingRoot = await MerkleRoot.findOne({ name });
-    if (existingRoot) {
-      return res.status(400).json({
-        msg: `Ein Merkle Root mit dem Namen "${name}" existiert bereits.`,
-      });
-    }
-
-    // Merkle Tree generieren
-    const { root } = generateMerkleTree(walletAddresses);
-
-    // Neues Merkle-Root-Dokument erstellen und speichern
-    const newMerkleRoot = new MerkleRoot({
+    await snapshotQueue.add("generate-root-from-manual", {
       name,
-      root,
-      walletAddresses, // HIER: Das Array wird jetzt mitgespeichert
+      walletAddresses,
     });
-
-    await newMerkleRoot.save();
-
-    res.status(201).json({
-      msg: "Merkle Root erfolgreich generiert und gespeichert.",
-      merkleRoot: newMerkleRoot,
-    });
+    res
+      .status(202)
+      .json({
+        msg: "Job akzeptiert. Die Liste wird im Hintergrund verarbeitet.",
+      });
   } catch (err) {
-    console.error("Fehler beim Generieren des Merkle Roots:", err);
+    logger.error(err, "Fehler beim Hinzufügen des manuellen Jobs zur Queue.");
     res.status(500).send("Server-Fehler");
   }
 });
 
-/**
- * @route   GET api/admin/merkle-roots
- * @desc    Zeigt alle gespeicherten Merkle Roots an (Monitoring)
- * @access  Private (Admin)
- */
+// GET /api/admin/merkle-roots (Die wiederhergestellte Route)
 router.get("/merkle-roots", async (req, res) => {
   try {
     const roots = await MerkleRoot.find().sort({ createdAt: -1 }); // Neueste zuerst
     res.json(roots);
   } catch (err) {
-    console.error("Fehler beim Abrufen der Merkle Roots:", err);
+    logger.error(err, "Fehler beim Laden der Merkle Roots");
     res.status(500).send("Server-Fehler");
   }
 });

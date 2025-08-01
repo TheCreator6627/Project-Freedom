@@ -1,0 +1,20 @@
+# .dockerignore (für Frontend & Backend)
+node_modules
+dist
+build
+.next
+.env
+.env.*
+Dockerfile
+docker-compose.yml
+.git
+.gitignore
+.vscode
+*.log
+*.tsbuildinfo
+coverage
+.cache
+.pnpm-store
+*.zip
+*.tar
+*.tar.gz

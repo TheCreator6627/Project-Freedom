@@ -1,15 +1,13 @@
-# 1. Basis-Image auswählen
-FROM node:18-alpine
+# 1. Basis-Image auf Node 20 aktualisieren
+FROM node:20-alpine
 
 # 2. Arbeitsverzeichnis im Container festlegen
 WORKDIR /app
 
 # 3. ZUERST nur die package-Dateien kopieren
-# Dieser Schritt ist entscheidend für das Caching.
 COPY package*.json ./
 
 # 4. Abhängigkeiten installieren
-# Dieser langsame Schritt wird nur ausgeführt, wenn sich die package.json ändert.
 RUN npm install
 
 # 5. DANACH den gesamten restlichen Code kopieren

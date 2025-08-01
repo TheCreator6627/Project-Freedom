@@ -1,90 +1,42 @@
-"use client";
-import { useState } from 'react';
-import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { stakingAddress, stakingAbi, fTokenAddress, fTokenAbiForApproval } from '@/lib/web3/contracts';
-import { parseUnits } from 'viem';
+import {
+  fTokenAbi,
+  stakingAbi,
+  rewardManagerAbi,
+  treasuryAbi,
+  tokenVestingAbi // Annahme, dass du diese ABI auch in abis.ts hast
+} from './abis';
 
-export function StakingActions() {
-  const [amount, setAmount] = useState('');
-  const [duration, setDuration] = useState(30);
+// Definiere die neuen, verifizierten Adressen an einem Ort
+const addresses = {
+  fToken: '0xe93BCD441452E75D7ED88174a205a9DcCc6FAc36',
+  staking: '0x938C0EAD6aEF71Da9827194C81E6EaDE4D12D273',
+  rewardManager: '0x96Febf5384B0C5c2A6800170865bfdE1864c8F0c',
+  treasury: '0xC07a2D56CcD1aaFD23a1611c9a3022E478B6fd0',
+  tokenVesting: '0x4FA12941f9A8F3C7ca146c8c3903d9eAba770AEc',
+} as const;
 
-  // Wagmi Hook für das Schreiben von Transaktionen
-  const { data: hash, writeContract, isPending, error } = useWriteContract();
-  
-  // Wagmi Hook, um auf die Bestätigung der Transaktion zu warten
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash });
+// Erstelle und exportiere die fertigen Vertrags-Objekte
+export const fTokenContract = {
+  address: addresses.fToken,
+  abi: fTokenAbi,
+};
 
-  const handleStake = async () => {
-    const parsedAmount = parseUnits(amount, 18);
+export const stakingContract = {
+  address: addresses.staking,
+  abi: stakingAbi,
+};
 
-    // WICHTIG: Zuerst muss der Staking-Vertrag die Erlaubnis bekommen, die Token auszugeben
-    writeContract({
-      address: fTokenAddress,
-      abi: fTokenAbiForApproval,
-      functionName: 'approve',
-      args: [stakingAddress, parsedAmount],
-    }, {
-      onSuccess: () => {
-        // Erst nach erfolgreichem "approve" rufen wir die eigentliche "stake"-Funktion auf
-        writeContract({
-          address: stakingAddress,
-          abi: stakingAbi,
-          functionName: 'stake',
-          args: [parsedAmount, BigInt(duration)],
-        });
-      }
-    });
-  };
+export const rewardManagerContract = {
+  address: addresses.rewardManager,
+  abi: rewardManagerAbi,
+};
 
-  const handleUnstake = () => {
-    writeContract({
-      address: stakingAddress,
-      abi: stakingAbi,
-      functionName: 'unstake',
-    });
-  };
+export const treasuryContract = {
+  address: addresses.treasury,
+  abi: treasuryAbi,
+};
 
-  return (
-    <div className="bg-gray-800 p-6 rounded-lg mt-8">
-      <h2 className="text-xl font-bold text-white mb-4">Aktionen</h2>
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Staking Form */}
-        <div className="flex-1">
-          <h3 className="text-white mb-2">Neuen Stake starten</h3>
-          <input
-            type="number"
-            placeholder="Anzahl F-Token"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-full p-2 rounded bg-gray-700 text-white mb-2"
-          />
-          <select 
-            value={duration} 
-            onChange={(e) => setDuration(Number(e.target.value))}
-            className="w-full p-2 rounded bg-gray-700 text-white mb-4"
-          >
-            <option value={30}>30 Tage</option>
-            <option value={90}>90 Tage</option>
-            <option value={180}>180 Tage</option>
-            <option value={365}>365 Tage</option>
-          </select>
-          <button onClick={handleStake} disabled={isPending} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            {isPending ? 'Warte auf Bestätigung...' : 'Stake'}
-          </button>
-        </div>
-        {/* Unstaking Button */}
-        <div className="flex-1">
-          <h3 className="text-white mb-2">Bestehenden Stake abheben</h3>
-          <p className="text-gray-400 mb-4 text-sm">Dies ist nur möglich, wenn die Sperrfrist abgelaufen ist.</p>
-          <button onClick={handleUnstake} disabled={isPending} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            {isPending ? 'Warte auf Bestätigung...' : 'Unstake'}
-          </button>
-        </div>
-      </div>
-       {/* Status-Anzeigen für die Transaktion */}
-      {isConfirming && <p className="text-yellow-400 mt-4">Transaktion wird verarbeitet...</p>}
-      {isConfirmed && <p className="text-green-400 mt-4">Transaktion erfolgreich bestätigt!</p>}
-      {error && <p className="text-red-400 mt-4">Fehler: {error.shortMessage}</p>}
-    </div>
-  );
-}
+export const tokenVestingContract = {
+  address: addresses.tokenVesting,
+  abi: tokenVestingAbi,
+};

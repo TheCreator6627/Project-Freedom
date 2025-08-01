@@ -1,14 +1,19 @@
-import { HardhatUserConfig } from 'hardhat/config';
-import '@nomicfoundation/hardhat-toolbox';
-import 'dotenv/config';
-const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
-const RPC_URL = process.env.RPC_URL || '';
-const EXPLORER_API = process.env.EXPLORER_API || '';
-const config: HardhatUserConfig = {
-  solidity: '0.8.20',
+require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config(); // dotenv für sichere Schlüsselverwaltung
+
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.20", // Deine Solidity-Version
   networks: {
-    bsctestnet: { url: RPC_URL, chainId: 97, accounts: [PRIVATE_KEY] },
+    // Dies ist dein lokales Netzwerk
+    localhost: {
+      url: "http://127.0.0.1:8545",
+    },
+    // Füge dieses Netzwerk hinzu
+    bscTestnet: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      chainId: 97,
+      accounts: [process.env.PRIVATE_KEY], // Lädt den Key sicher aus einer .env-Datei
+    },
   },
-  etherscan: { apiKey: EXPLORER_API },
 };
-export default config;

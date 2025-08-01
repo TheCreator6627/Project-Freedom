@@ -25,6 +25,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^5.4.0",
     "@tanstack/react-query": "^5.83.1",
+    "@truffle/hdwallet-provider": "^1.7.0",
     "alchemy-sdk": "^3.6.2",
     "bullmq": "^5.56.9",
     "cors": "^2.8.5",

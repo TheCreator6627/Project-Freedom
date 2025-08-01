@@ -62,4 +62,13 @@ export default function Home() {
       </footer>
     </div>
   );
+  // in frontend/app/page.tsx, innerhalb des return-Teils
+<div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+  <Link href="/staking" className="text-xl text-blue-400 hover:underline font-semibold">
+    Zum Staking-Portal {'->'}
+  </Link>
+  <Link href="/claim" className="text-xl text-green-400 hover:underline font-semibold">
+    Zu den NFT-Belohnungen {'->'}
+  </Link>
+</div>
 }

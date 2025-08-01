@@ -780,3 +780,20 @@ export const fTokenAbi =[
 
 // Die deployte Adresse deines F-Token Vertrags
 export const fTokenAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+
+export const rewardManagerAddress =
+  "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+
+export const rewardManagerAbi = [
+  // ... (setMerkleRoot von vorher)
+  {
+    inputs: [
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "bytes32[]", name: "merkleProof", type: "bytes32[]" },
+    ],
+    name: "claimNFT",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;

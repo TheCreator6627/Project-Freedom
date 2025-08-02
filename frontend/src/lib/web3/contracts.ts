@@ -1,29 +1,29 @@
 // frontend/src/lib/contracts.ts
 
 // 1. Importiere die Artefakte aus dem lokalen, kopierten Ordner
-import FTokenArtifact from "./artifacts/F.json";
-import StakingArtifact from "./artifacts/Staking.json";
-import TreasuryArtifact from "./artifacts/Treasury.json";
-import RewardManagerArtifact from "./artifacts/RewardManager.json";
+import FTokenArtifact from "@/lib/artifacts/F.json";
+import StakingArtifact from "@/lib/artifacts/Staking.json";
+import TreasuryArtifact from "@/lib/artifacts/Treasury.json";
+import RewardManagerArtifact from "@/lib/artifacts/RewardManager.json";
+
 
 // 2. Definiere die Netzwerk-ID für das BSC Testnet
-const bscTestnetId = "97";
+const bsctestnetId = '97';
 
 // --- ABIs ---
+// Daran ändert sich nichts
 export const fTokenAbi = FTokenArtifact.abi;
 export const stakingAbi = StakingArtifact.abi;
 export const treasuryAbi = TreasuryArtifact.abi;
 export const rewardManagerAbi = RewardManagerArtifact.abi;
 
 // --- Adressen ---
-export const fTokenAddress = FTokenArtifact.networks[bscTestnetId]
-  ?.address as `0x${string}`;
-export const stakingAddress = StakingArtifact.networks[bscTestnetId]
-  ?.address as `0x${string}`;
-export const treasuryAddress = TreasuryArtifact.networks[bscTestnetId]
-  ?.address as `0x${string}`;
-export const rewardManagerAddress = RewardManagerArtifact.networks[bscTestnetId]
-  ?.address as `0x${string}`;
+// Dieser Teil ist korrigiert, um den TypeScript-Fehler zu beheben
+export const fTokenAddress = (FTokenArtifact.networks as any)["bscTestnetId"]?.address as `0x${string}`;
+export const stakingAddress = (StakingArtifact.networks as any)["bscTestnetId"]?.address as `0x${string}`;
+export const treasuryAddress = (TreasuryArtifact.networks as any)["bscTestnetId"]?.address as `0x${string}`;
+export const rewardManagerAddress = (RewardManagerArtifact.networks as any)["bscTestnetId"]?.address as `0x${string}`;
+
 
 // --- Validierungs-Check ---
 if (

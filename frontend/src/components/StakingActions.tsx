@@ -1,7 +1,7 @@
 "use client";
 
 import { useWriteContract } from 'wagmi';
-import { stakingAddress, stakingAbi } from '@/lib/contracts'; // KORRIGIERT
+import { stakingAddress, stakingAbi } from '@/lib/web3/contracts'; // KORRIGIERT
 import { parseEther } from 'viem';
 
 export function StakingActions() {

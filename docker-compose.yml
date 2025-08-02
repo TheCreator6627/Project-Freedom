@@ -1,31 +1,30 @@
-version: "3.9"
-
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    container_name: backend
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    env_file:
+      - .env
+
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: freedom_frontend
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    container_name: frontend
     ports:
       - "3000:3000"
     volumes:
       - ./frontend:/app
       - /app/node_modules
-      - ./build/contracts:/app/src/lib/artifacts:ro
-    env_file:
-      - ./frontend/.env.local
-    restart: unless-stopped
+    depends_on:
+      - backend
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: freedom_backend
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    env_file:
-      - ./backend/.env
-    restart: unless-stopped
+networks:
+  default:
+    driver: bridge

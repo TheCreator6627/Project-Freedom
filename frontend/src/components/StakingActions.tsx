@@ -1,35 +1,32 @@
-// frontend/components/StakingActions.tsx
 "use client";
 
 import { useWriteContract } from 'wagmi';
-import { STAKING_ABI } from '@/lib/abi'; // <-- KORREKTER IMPORT
+import { stakingAddress, stakingAbi } from '@/lib/contracts'; // KORRIGIERT
 import { parseEther } from 'viem';
-
-// Die Adresse deines Staking-Vertrags
-const STAKING_CONTRACT_ADDRESS = '0xDEINE_STAKING_VERTRAGSADRESSE';
 
 export function StakingActions() {
   const { writeContract, isPending } = useWriteContract();
 
   const handleStake = () => {
+    if (!stakingAddress) {
+      console.error("Staking Adresse nicht gefunden!");
+      return;
+    }
     writeContract({
-      address: STAKING_CONTRACT_ADDRESS,
-      abi: STAKING_ABI,
+      address: stakingAddress,
+      abi: stakingAbi,
       functionName: 'stake',
-      args: [parseEther('100')], // Beispiel: 100 Token staken
+      args: [parseEther('100')], 
     });
   };
 
   return (
-    <div className="p-4 border border-gray-700 rounded-lg">
-      <h3 className="text-xl font-bold mb-4">Aktionen</h3>
-      <button
-        onClick={handleStake}
-        disabled={isPending}
-        className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-500"
-      >
-        {isPending ? 'Stake wird verarbeitet...' : '100 Token staken'}
-      </button>
-    </div>
+    <button
+      onClick={handleStake}
+      disabled={isPending || !stakingAddress}
+      className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-500"
+    >
+      {isPending ? 'Wird verarbeitet...' : '100 Token staken'}
+    </button>
   );
 }

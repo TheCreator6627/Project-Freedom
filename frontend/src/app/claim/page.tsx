@@ -1,19 +1,23 @@
 "use client";
-import { ClaimReward } from "@/src/components/ClaimReward";
-import { ConnectButton } from "@/src/components/ConnectButton";
-import Link from 'next/link';
+
+import { ClaimReward } from '@/components/ClaimReward'; // KORRIGIERT
+import { ConnectButton } from '@/components/ConnectButton'; // KORRIGIERT
+import { useAccount } from 'wagmi';
 
 export default function ClaimPage() {
-  return (
-    <main className="container mx-auto p-4 md:p-8">
-      <header className="flex justify-between items-center mb-8">
-        <div>
-          <Link href="/" className="text-blue-400 hover:underline">{'<'} Zurück zum Haupt-Dashboard</Link>
-          <h1 className="text-2xl md:text-4xl font-bold text-white mt-2">NFT Belohnungen</h1>
-        </div>
-        <ConnectButton />
-      </header>
-      <ClaimReward />
-    </main>
-  );
+    const { isConnected } = useAccount();
+
+    return (
+        <main className="container mx-auto p-8">
+            <h1 className="text-4xl font-bold mb-8">Belohnungen abholen</h1>
+            {isConnected ? (
+                <ClaimReward />
+            ) : (
+                <div>
+                    <p className="mb-4">Bitte verbinde deine Wallet, um deine Belohnungen zu sehen.</p>
+                    <ConnectButton />
+                </div>
+            )}
+        </main>
+    );
 }

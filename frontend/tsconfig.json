@@ -25,8 +25,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./*"
-      ]
+        "src/*"
+      ] // <-- DIE ENTSCHEIDENDE ÄNDERUNG
     }
   },
   "include": [

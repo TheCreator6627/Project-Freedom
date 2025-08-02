@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useAuth } from "@/context/AdminSession";
+import { useAuth } from "@/src/context/AdminSession";
 import { useEffect, useState } from "react";
 import React from 'react';
 

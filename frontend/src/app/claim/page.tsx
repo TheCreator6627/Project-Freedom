@@ -1,6 +1,6 @@
 "use client";
-import { ClaimReward } from "@/components/ClaimReward";
-import { ConnectButton } from "@/components/ConnectButton";
+import { ClaimReward } from "@/src/components/ClaimReward";
+import { ConnectButton } from "@/src/components/ConnectButton";
 import Link from 'next/link';
 
 export default function ClaimPage() {

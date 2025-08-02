@@ -1,7 +1,7 @@
 "use client";
 import { StakingDashboard } from "@/components/StakingDashboard";
-import { StakingActions } from "@/components/StakingActions";
-import { ConnectButton } from "@/components/ConnectButton";
+import { StakingActions } from "@/src/components/StakingActions";
+import { ConnectButton } from "@/src/components/ConnectButton";
 import { useAccount } from "wagmi";
 import Link from 'next/link';
 

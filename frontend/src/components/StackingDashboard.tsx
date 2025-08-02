@@ -1,6 +1,6 @@
 "use client";
 import { useAccount, useReadContract } from "wagmi";
-import { stakingAddress, stakingAbi } from "@/lib/web3/contracts";
+import { stakingAddress, stakingAbi } from "@/src/lib/web3/contracts";
 import { formatUnits } from "viem";
 import { useEffect, useState } from "react";
 

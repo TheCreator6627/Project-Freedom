@@ -2,8 +2,8 @@
 
 "use client";
 
-import { ProtectedAdminRoute } from "@/components/ProtectedAdminRoute";
-import { useAuth } from "@/context/AdminSession";
+import { ProtectedAdminRoute } from "@/src/components/ProtectedAdminRoute";
+import { useAuth } from "@/src/context/AdminSession";
 import { useState, useEffect } from "react";
 
 // Definiere, wie ein MerkleRoot-Objekt aussieht

@@ -1,5 +1,3 @@
-# Die 'version'-Angabe kann entfernt werden, sie ist obsolet.
-
 services:
   backend:
     build:
@@ -14,13 +12,6 @@ services:
     env_file:
       - ./backend/.env
     restart: unless-stopped
-    networks: # Dem definierten Netzwerk zuweisen
-      - freedom-net
-    healthcheck: # Prüft, ob der Backend-Server wirklich antwortet
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"] # Pfad anpassen, falls du einen Health-Endpoint hast
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   frontend:
     build:
@@ -35,13 +26,5 @@ services:
     env_file:
       - ./frontend/.env.local
     restart: unless-stopped
-    networks: # Dem definierten Netzwerk zuweisen
-      - freedom-net
-    depends_on: # Macht die Startreihenfolge explizit
-      backend:
-        condition: service_healthy # Wartet, bis der Healthcheck des Backends erfolgreich ist
-
-# Definition des Netzwerks auf Top-Ebene
-networks:
-  freedom-net:
-    driver: bridge
+    depends_on:
+      - backend

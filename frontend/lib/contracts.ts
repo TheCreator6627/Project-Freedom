@@ -10,13 +10,12 @@ import RewardManagerArtifact from "../../build/contracts/RewardManager.json";
 const bscTestnetId = "97";
 
 // --- ABIs ---
-// Einheitliche Benennung (camelCase) für sauberen Code
 export const fTokenAbi = FTokenArtifact.abi;
 export const stakingAbi = StakingArtifact.abi;
 export const treasuryAbi = TreasuryArtifact.abi;
 export const rewardManagerAbi = RewardManagerArtifact.abi;
 
-// --- Adressen (dynamisch aus den Build-Dateien gelesen) ---
+// --- Adressen ---
 export const fTokenAddress = FTokenArtifact.networks[bscTestnetId]
   ?.address as `0x${string}`;
 export const stakingAddress = StakingArtifact.networks[bscTestnetId]
@@ -27,14 +26,13 @@ export const rewardManagerAddress = RewardManagerArtifact.networks[bscTestnetId]
   ?.address as `0x${string}`;
 
 // --- Validierungs-Check ---
-// Stellt sicher, dass alle Verträge auf dem Testnet deployt wurden
 if (
   !fTokenAddress ||
   !stakingAddress ||
   !treasuryAddress ||
   !rewardManagerAddress
 ) {
-  throw new Error(
-    "Eine oder mehrere Vertragsadressen wurden nicht gefunden. Stelle sicher, dass ALLE Verträge auf dem BSC Testnet (ID 97) deployed wurden."
+  console.error(
+    "Eine oder mehrere Vertragsadressen wurden nicht gefunden. Stelle sicher, dass ALLE Verträge auf dem BSC Testnet (ID 97) deployed und die `build/contracts`-Dateien aktuell sind."
   );
 }

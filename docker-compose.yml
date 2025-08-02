@@ -15,8 +15,8 @@ services:
 
   frontend:
     build:
-      context: . # <-- WICHTIGE ÄNDERUNG: Von ./frontend zu .
-      dockerfile: frontend/Dockerfile # <-- Pfad zur Dockerfile angepasst
+      context: ./frontend # <-- WICHTIG: Zurück auf ./frontend
+      dockerfile: Dockerfile
     container_name: freedom_frontend
     ports:
       - "3000:3000"

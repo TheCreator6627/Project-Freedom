@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   backend:
     build:
@@ -19,13 +21,15 @@ services:
     container_name: frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-env_file:
-  - ./frontend/.env.local
+    # ACHTUNG: Volumes entfernen bei Build-Problem!
+    # volumes:
+    #   - ./frontend:/app
+    #   - /app/node_modules
+    env_file:
+      - ./frontend/.env.local
+    depends_on:
+      - backend
 
 networks:
   default:
     driver: bridge
-

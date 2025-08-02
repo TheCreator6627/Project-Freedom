@@ -1,24 +1,23 @@
-# 1. Basis-Image auswählen
+# 1. Basis-Image
 FROM node:20-alpine
 
-# 2. Arbeitsverzeichnis im Container festlegen
+# 2. Arbeitsverzeichnis
 WORKDIR /app
 
-# 3. ZUERST nur die package-Dateien aus dem frontend-Ordner kopieren
-COPY frontend/package*.json ./
+# 3. Nur package-Dateien kopieren
+COPY package*.json ./
 
-# 4. Die Vertrags-Artefakte in einen neuen Ordner kopieren
-#    Dieser Schritt ist der Schlüssel zur Lösung des Problems.
-COPY build/contracts ./src/lib/artifacts/
-
-# 5. Abhängigkeiten installieren
+# 4. Abhängigkeiten installieren
 RUN npm install
 
-# 6. DANACH den gesamten restlichen Code aus dem frontend-Ordner kopieren
-COPY frontend/ .
+# 5. Restlichen Code kopieren
+COPY . .
 
-# 7. Die Next.js-Anwendung für die Produktion bauen
+# 🚫 Diese Zeile muss WEG, sonst Fehler:
+# COPY build/contracts ./src/lib/artifacts/
+
+# 6. Build starten
 RUN npm run build
 
-# 8. Den optimierten Next.js-Server starten
+# 7. Start
 CMD ["npm", "start"]

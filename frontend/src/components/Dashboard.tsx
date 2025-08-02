@@ -2,7 +2,7 @@
 "use client";
 
 import { useAccount, useBalance, useReadContract } from "wagmi";
-import { fTokenAddress, fTokenAbi } from "@/src/lib/web3/contracts";
+import { fTokenAddress, fTokenAbi } from "@/lib/web3/contracts";
 import { formatUnits } from "viem";
 
 export function Dashboard() {

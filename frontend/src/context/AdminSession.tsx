@@ -1,19 +1,16 @@
+// src/context/AdminSession.tsx
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import React, { createContext, useContext } from 'react';
+// NUR EINMAL KORREKT IMPORTIEREN
+import React, { 
+  createContext, 
+  useContext, 
+  useState, 
+  ReactNode, 
+  useEffect 
+} from 'react';
 
-const AdminSessionContext = createContext<any>(null);
-
-export const useAdminSession = () => {
-  return useContext(AdminSessionContext);
-};
-
-export const AdminSessionProvider = ({ children }: { children: React.ReactNode }) => {
-  const value = {}; // Platzhalter
-  return <AdminSessionContext.Provider value={value}>{children}</AdminSessionContext.Provider>;
-};
-// Definiert, wie die Daten aussehen, die wir speichern
+// Definiert die Struktur der Authentifizierungsdaten
 interface AuthState {
   token: string | null;
   user: {
@@ -26,76 +23,66 @@ interface AuthState {
   logout: () => void;
 }
 
-// Erstellt den Context, auf den die App zugreifen kann
+// NUR EINEN CONTEXT ERSTELLEN
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
-// Erstellt den Provider, der die ganze Logik enthält
+// Provider, der die Logik und die Daten für die App bereitstellt
 export function AdminSessionProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true); // Wichtig, um Ladezustände zu managen
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Dieser Hook läuft einmal, wenn die App startet
   useEffect(() => {
     const loadUserFromToken = async () => {
-      // 1. Suche nach einem gespeicherten Token im Browser
       const storedToken = localStorage.getItem('authToken');
       
-      console.log("Beim Laden der Seite gefundenes Token:", storedToken);
-
-      // 2. Wenn ein Token da ist, frage das Backend, wer dazu gehört
       if (storedToken) {
         try {
           const response = await fetch('http://localhost:5000/api/auth/me', {
-            headers: {
-              'Authorization': `Bearer ${storedToken}`,
-            },
+            headers: { 'Authorization': `Bearer ${storedToken}` },
           });
 
-          // 3. Wenn das Backend den Token bestätigt, stelle den Login-Status wieder her
           if (response.ok) {
             const userData = await response.json();
             setToken(storedToken);
             setUser(userData);
           } else {
-            // Wenn der Token ungültig ist, lösche ihn
             localStorage.removeItem('authToken');
           }
         } catch (error) {
-          console.error("Fehler beim Wiederherstellen der Session", error);
+          console.error("Fehler beim Wiederherstellen der Session:", error);
           localStorage.removeItem('authToken');
         }
       }
-      // 4. Signalisiere, dass der Ladevorgang abgeschlossen ist
       setIsLoading(false);
     };
 
     loadUserFromToken();
   }, []);
 
-  // Funktion zum Einloggen
   const login = (newToken: string, userData: any) => {
+    localStorage.setItem('authToken', newToken);
     setToken(newToken);
     setUser(userData);
-    localStorage.setItem('authToken', newToken);
   };
 
-  // Funktion zum Ausloggen
   const logout = () => {
+    localStorage.removeItem('authToken');
     setToken(null);
     setUser(null);
-    localStorage.removeItem('authToken');
   };
 
+  const value = { token, user, isLoading, login, logout };
+
   return (
-    <AuthContext.Provider value={{ token, user, isLoading, login, logout }}>
-      {/* Zeige die App erst an, wenn der Lade-Check abgeschlossen ist */}
-      {!isLoading && children}
+    <AuthContext.Provider value={value}>
+      {/* Die Kinder nicht rendern, solange der Ladevorgang aktiv ist */}
+      {!isLoading ? children : null}
     </AuthContext.Provider>
   );
 }
 
-// Ein einfacher Hook, um aus anderen Komponenten auf den Context zuzugreifen
+// Der Hook, um auf die Authentifizierungsdaten zuzugreifen
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

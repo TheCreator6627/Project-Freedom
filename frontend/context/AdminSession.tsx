@@ -1,7 +1,18 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 
+const AdminSessionContext = createContext<any>(null);
+
+export const useAdminSession = () => {
+  return useContext(AdminSessionContext);
+};
+
+export const AdminSessionProvider = ({ children }: { children: React.ReactNode }) => {
+  const value = {}; // Platzhalter
+  return <AdminSessionContext.Provider value={value}>{children}</AdminSessionContext.Provider>;
+};
 // Definiert, wie die Daten aussehen, die wir speichern
 interface AuthState {
   token: string | null;

@@ -1,32 +1,40 @@
 // frontend/lib/contracts.ts
 
-// 1. Importiere die kompletten Artefakt-Dateien
-//    Stelle sicher, dass der Pfad zu deinem `build`-Ordner korrekt ist.
+// 1. Importiere die kompletten Artefakt-Dateien von Truffle
 import FTokenArtifact from "../../build/contracts/F.json";
 import StakingArtifact from "../../build/contracts/Staking.json";
 import TreasuryArtifact from "../../build/contracts/Treasury.json";
+import RewardManagerArtifact from "../../build/contracts/RewardManager.json";
 
 // 2. Definiere die Netzwerk-ID für das BSC Testnet
 const bscTestnetId = "97";
 
-// 3. Exportiere die ABIs (unverändert)
-export const F_TOKEN_ABI = FTokenArtifact.abi;
-export const STAKING_ABI = StakingArtifact.abi;
-export const TREASURY_ABI = TreasuryArtifact.abi;
+// --- ABIs ---
+// Einheitliche Benennung (camelCase) für sauberen Code
+export const fTokenAbi = FTokenArtifact.abi;
+export const stakingAbi = StakingArtifact.abi;
+export const treasuryAbi = TreasuryArtifact.abi;
+export const rewardManagerAbi = RewardManagerArtifact.abi;
 
-// 4. Exportiere die Adressen DYNAMISCH aus den Artefakten
-//    Truffle speichert die Adresse unter der Netzwerk-ID.
-//    Die `as` Anweisung sorgt für korrekte Typen für wagmi/viem.
-export const F_TOKEN_ADDRESS = FTokenArtifact.networks[bscTestnetId]
+// --- Adressen (dynamisch aus den Build-Dateien gelesen) ---
+export const fTokenAddress = FTokenArtifact.networks[bscTestnetId]
   ?.address as `0x${string}`;
-export const STAKING_ADDRESS = StakingArtifact.networks[bscTestnetId]
+export const stakingAddress = StakingArtifact.networks[bscTestnetId]
   ?.address as `0x${string}`;
-export const TREASURY_ADDRESS = TreasuryArtifact.networks[bscTestnetId]
+export const treasuryAddress = TreasuryArtifact.networks[bscTestnetId]
+  ?.address as `0x${string}`;
+export const rewardManagerAddress = RewardManagerArtifact.networks[bscTestnetId]
   ?.address as `0x${string}`;
 
-// 5. Ein kleiner Check, um Fehler frühzeitig zu erkennen
-if (!F_TOKEN_ADDRESS || !STAKING_ADDRESS || !TREASURY_ADDRESS) {
+// --- Validierungs-Check ---
+// Stellt sicher, dass alle Verträge auf dem Testnet deployt wurden
+if (
+  !fTokenAddress ||
+  !stakingAddress ||
+  !treasuryAddress ||
+  !rewardManagerAddress
+) {
   throw new Error(
-    "Eine oder mehrere Vertragsadressen wurden in den Artefakt-Dateien nicht gefunden. Stelle sicher, dass du die Verträge auf dem BSC Testnet (ID 97) deployed hast."
+    "Eine oder mehrere Vertragsadressen wurden nicht gefunden. Stelle sicher, dass ALLE Verträge auf dem BSC Testnet (ID 97) deployed wurden."
   );
 }

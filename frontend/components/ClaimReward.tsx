@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { rewardManagerAddress, rewardManagerAbi } from '@/lib/web3/contracts';
+import React from 'react';
 
 interface ClaimButtonProps {
   tokenId: number;

@@ -4,7 +4,12 @@
 
 import { useAuth } from "@/context/AdminSession";
 import { useEffect, useState } from "react";
+import React from 'react';
 
+export const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
+  // TODO: Admin-Authentifizierungslogik hier einfügen
+  return <>{children}</>;
+};
 // Diese Komponente "umhüllt" eine Seite und zeigt sie nur an, wenn ein Admin eingeloggt ist.
 export function ProtectedAdminRoute({ children }: { children: React.ReactNode }) {
   const { token } = useAuth();

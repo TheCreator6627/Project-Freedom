@@ -1,10 +1,10 @@
 // frontend/lib/contracts.ts
 
 // 1. Importiere die kompletten Artefakt-Dateien von Truffle
-import FTokenArtifact from "../../build/contracts/F.json";
-import StakingArtifact from "../../build/contracts/Staking.json";
-import TreasuryArtifact from "../../build/contracts/Treasury.json";
-import RewardManagerArtifact from "../../build/contracts/RewardManager.json";
+import FTokenArtifact from "../../../build/contracts/F.json";
+import StakingArtifact from "../../../build/contracts/Staking.json";
+import TreasuryArtifact from "../../../build/contracts/Treasury.json";
+import RewardManagerArtifact from "../../../build/contracts/RewardManager.json";
 
 // 2. Definiere die Netzwerk-ID für das BSC Testnet
 const bscTestnetId = "97";

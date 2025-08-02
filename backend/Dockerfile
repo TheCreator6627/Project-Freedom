@@ -9,7 +9,8 @@ COPY package*.json ./
 
 # 4. Abhängigkeiten installieren
 # Dieser langsame Schritt wird nur ausgeführt, wenn sich die package.json ändert.
-RUN npm install
+CMD ["npx", "next", "start"]
+
 
 # 5. DANACH den gesamten restlichen Code kopieren
 COPY . .

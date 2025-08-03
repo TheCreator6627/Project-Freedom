@@ -33,6 +33,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next.config.js"
+    "globals.d.ts"
   ],
   "exclude": [
     "node_modules"

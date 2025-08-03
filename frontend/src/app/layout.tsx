@@ -2,7 +2,7 @@
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "@/app/";
+import "@/app/globals.css";
 import { Providers } from "@/context/Web3Provider"; // Dieser Pfad funktioniert dank des Alias weiterhin
 import { form } from "viem/chains";
 

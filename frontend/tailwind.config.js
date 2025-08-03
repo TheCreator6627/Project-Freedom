@@ -7,21 +7,8 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // Hier kannst du dein Theme erweitern, falls nötig
+      // Hier kannst du eigene Farben, Fonts, Abstände etc. erweitern
     },
   },
   plugins: [],
 };
-
-
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
-

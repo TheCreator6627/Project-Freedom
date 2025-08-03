@@ -4,8 +4,8 @@
 **/build
 **/dist
 .dockerignore
-Dockerfile*
-docker-compose.yml
+
+
 .env
 *.log
 README.md

@@ -1,19 +1,23 @@
-# 1. Basis-Image mit korrekter Node-Version
+
 FROM node:20-alpine
 
-# 2. Arbeitsverzeichnis im Container festlegen
 WORKDIR /app
 
-# 3. ZUERST nur die package-Dateien kopieren
+# Kopiere nur package.json, um den Cache zu nutzen
 COPY package*.json ./
 
-# 4. Abhängigkeiten installieren
-# Dieser langsame Schritt wird nur ausgeführt, wenn sich die package.json ändert.
-CMD ["npx", "next", "start"]
+# Installiere NUR Production-Dependencies
+RUN npm install --omit=dev
 
-
-# 5. DANACH den gesamten restlichen Code kopieren
+# Kopiere den restlichen Code (server.js, utils/, db/, etc.)
 COPY . .
 
-# 6. Den Server starten
-CMD ["node", "server.js"]
+# Erstelle einen unprivilegierten Benutzer
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 node
+USER node
+
+# Dein Code nutzt Port 5000 als Fallback, aber wir setzen den Port via Docker auf 8080
+EXPOSE 8080
+
+# Starte die Anwendung
+CMD [ "node", "server.js" ]

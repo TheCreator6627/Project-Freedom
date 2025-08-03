@@ -4,7 +4,7 @@
 # STAGE 1: Dependency Installation
 # Diese Stufe installiert sauber alle Dependencies basierend auf der neuen package-lock.json
 # =========================================================================
-FROM node:20-alpine AS deps
+FROM node:24-alpine AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json* ./

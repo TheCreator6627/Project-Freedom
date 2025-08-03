@@ -2,8 +2,9 @@
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "@/styles/globals.css";
+import "@/app/";
 import { Providers } from "@/context/Web3Provider"; // Dieser Pfad funktioniert dank des Alias weiterhin
+import { form } from "viem/chains";
 
 const inter = Inter({ subsets: ["latin"] });
 

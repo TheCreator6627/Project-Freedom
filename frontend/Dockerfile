@@ -1,27 +1,18 @@
-# Dockerfile.frontend
-# =========================================================================
-# STAGE 1: Dependency Installation
-# =========================================================================
+
 FROM node:20-alpine AS deps
 LABEL stage="dependencies"
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY frontend/package.json frontend/package-lock.json* ./
+COPY package.json package-lock.json* ./
 RUN npm install --frozen-lockfile
 
-# =========================================================================
-# STAGE 2: Code Builder
-# =========================================================================
 FROM node:20-alpine AS builder
 LABEL stage="builder"
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY frontend/ .
+COPY . .
 RUN npm run build
 
-# =========================================================================
-# STAGE 3: Production Runner
-# =========================================================================
 FROM node:20-alpine AS runner
 LABEL stage="production-runner"
 WORKDIR /app

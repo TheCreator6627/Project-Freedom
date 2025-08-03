@@ -1,12 +1,9 @@
-# docker-compose.yml
 version: '3.8'
 
 services:
-  # Backend-Dienst (Node.js / Express)
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: freedom_backend
     restart: unless-stopped
     env_file: ./.env
@@ -15,46 +12,35 @@ services:
       - PORT=8080
     ports:
       - "8080:8080"
-    volumes:
-      - ./backend:/app # Mount für Live-Entwicklung, für Produktion auskommentieren/entfernen
-    depends_on:
-      - mongodb
     networks:
       - freedom-net
+    depends_on:
+      - mongodb
 
-  # Frontend-Dienst (Next.js)
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
+      context: ./frontend
     container_name: freedom_frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      # Wichtig: Diese URL wird an den Browser des Nutzers gesendet.
-      # 'backend' ist hier nicht gültig, da der Browser außerhalb des Docker-Netzwerks ist.
       - NEXT_PUBLIC_API_URL=http://localhost:8080/api
-    depends_on:
-      - backend
     networks:
       - freedom-net
+    depends_on:
+      - backend
 
-  # Datenbank-Dienst (MongoDB)
   mongodb:
     image: mongo:6.0
     container_name: freedom_mongodb
     restart: unless-stopped
     env_file: ./.env
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongodb_data:/data/db
     networks:
       - freedom-net
 
-# Netzwerke und Volumes
 networks:
   freedom-net:
     driver: bridge

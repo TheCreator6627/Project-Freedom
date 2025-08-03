@@ -1,7 +1,6 @@
 # docker-compose.override.yml
 # Diese Datei aktiviert den schnellen Entwicklungsmodus mit Hot-Reloading.
 
-version: '3.8'
 
 services:
   backend:

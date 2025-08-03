@@ -1,30 +1,51 @@
 # frontend/Dockerfile
+
+# =========================================================================
+# STAGE 1: Dependency Installation
+# Diese Stufe installiert sauber alle Dependencies basierend auf der neuen package-lock.json
+# =========================================================================
 FROM node:20-alpine AS deps
-LABEL stage="dependencies"
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
+
 COPY package.json package-lock.json* ./
 
-# FIX: 'npm ci' ist für Docker-Builds zuverlässiger und schneller.
-# Es installiert alle devDependencies, die für den Build benötigt werden.
+# npm ci ist der Goldstandard für reproduzierbare Builds in Docker.
 RUN npm ci
 
+# =========================================================================
+# STAGE 2: Code Builder
+# Diese Stufe baut die Anwendung. Wir setzen explizit NODE_ENV, um Zweifel auszuschließen.
+# =========================================================================
 FROM node:20-alpine AS builder
-LABEL stage="builder"
 WORKDIR /app
+
+# Setzt die Umgebung für den Build-Prozess, um sicherzustellen, dass alle Tools funktionieren.
+ENV NODE_ENV=development
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Führt den Production Build aus.
 RUN npm run build
 
+# =========================================================================
+# STAGE 3: Production Runner
+# Diese Stufe erstellt das minimale Image für den Live-Betrieb.
+# =========================================================================
 FROM node:20-alpine AS runner
-LABEL stage="production-runner"
 WORKDIR /app
-ENV NODE_ENV production
-ENV PORT 3000
+
+# Hier setzen wir die Umgebung auf 'production' für den Live-Betrieb.
+ENV NODE_ENV=production
+ENV PORT=3000
+
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
 USER nextjs
 EXPOSE 3000
+
 CMD ["node", "server.js"]

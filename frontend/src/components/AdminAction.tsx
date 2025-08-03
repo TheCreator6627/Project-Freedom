@@ -1,7 +1,21 @@
 "use client";
 
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { Abi } from 'viem';
+import { Abi, BaseError } from 'viem';
+
+// Diese Hilfsfunktion extrahiert sicher die bestmögliche Fehlermeldung.
+function getErrorMessage(error: Error | null): string {
+  if (!error) return '';
+  
+  // Prüft, ob es sich um einen spezifischen Fehler von viem/wagmi handelt.
+  if (error instanceof BaseError) {
+    // Gibt die saubere, kurze Fehlermeldung zurück (z.B. "User denied transaction").
+    return error.shortMessage;
+  }
+  
+  // Fallback für alle anderen Standard-JavaScript-Fehler.
+  return error.message;
+}
 
 interface AdminActionProps {
   contractAddress: `0x${string}`;
@@ -31,7 +45,9 @@ export function AdminAction({ contractAddress, contractAbi, functionName, args =
         {isPending ? 'Bestätigen...' : isConfirming ? 'In Arbeit...' : buttonText}
       </button>
       {isConfirmed && <p className="text-green-400 mt-2">{successMessage}</p>}
-      {error && <p className="text-red-400 mt-2">Fehler: {error.shortMessage}</p>}
+      
+      {/* KORREKTUR: Die Fehlermeldung wird jetzt über die Hilfsfunktion aufgerufen. */}
+      {error && <p className="text-red-400 mt-2">Fehler: {getErrorMessage(error)}</p>}
     </div>
   );
 }

@@ -1,0 +1,24 @@
+# docker-compose.override.yml
+# Diese Datei aktiviert den schnellen Entwicklungsmodus mit Hot-Reloading.
+
+version: '3.8'
+
+services:
+  backend:
+    # Wir starten das Backend mit einem Watcher, der auf Code-Änderungen reagiert.
+    # Stellen Sie sicher, dass Sie ein "dev"-Skript in Ihrer backend/package.json haben.
+    command: npm run dev
+    volumes:
+      # Synchronisiert Ihren lokalen Code-Ordner mit dem Container.
+      - ./backend:/app
+      # WICHTIG: Verhindert, dass Ihr lokaler node_modules-Ordner den im Container überschreibt.
+      - /app/node_modules
+
+  frontend:
+    # Wir überschreiben den Standardbefehl und starten den Next.js-Entwicklungs-Server.
+    command: npm run dev
+    volumes:
+      # Synchronisiert Ihren lokalen Code-Ordner mit dem Container.
+      - ./frontend:/app
+      # WICHTIG: Verhindert, dass Ihr lokaler node_modules-Ordner den im Container überschreibt.
+      - /app/node_modules

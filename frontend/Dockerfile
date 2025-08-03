@@ -1,10 +1,13 @@
-
+# frontend/Dockerfile
 FROM node:20-alpine AS deps
 LABEL stage="dependencies"
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm install --frozen-lockfile
+
+# FIX: 'npm ci' ist für Docker-Builds zuverlässiger und schneller.
+# Es installiert alle devDependencies, die für den Build benötigt werden.
+RUN npm ci
 
 FROM node:20-alpine AS builder
 LABEL stage="builder"

@@ -8,7 +8,6 @@ RUN npm install --omit=dev
 
 COPY . .
 
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 node
 USER node
 
 EXPOSE 8080

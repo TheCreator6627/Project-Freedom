@@ -8,11 +8,9 @@ services:
     container_name: backend
     ports:
       - "5001:5001"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
+
     env_file:
-      - .env
+      - ./backend/.env
 
   frontend:
     build:
@@ -21,10 +19,7 @@ services:
     container_name: frontend
     ports:
       - "3000:3000"
-    # ACHTUNG: Volumes entfernen bei Build-Problem!
-    # volumes:
-    #   - ./frontend:/app
-    #   - /app/node_modules
+
     env_file:
       - ./frontend/.env.local
     depends_on:

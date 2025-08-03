@@ -1,10 +1,10 @@
-# Git-Ordner
-.git
-
 # Lokale Abhängigkeiten (wichtigster Punkt!)
 node_modules
 frontend/node_modules
 backend/node_modules
+
+# Git-Ordner
+.git
 
 # Build-Artefakte
 frontend/.next/

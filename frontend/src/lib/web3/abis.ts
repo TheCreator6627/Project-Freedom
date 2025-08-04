@@ -2,9 +2,13 @@
 
 // Wir importieren die JSON-Dateien, die Truffle im build-Ordner erstellt.
 // Der Pfad muss von hier aus zum Hauptverzeichnis zurückgehen.
-import FTokenArtifact from "/Users/HP/Desktop/FreedomProject/build/contracts/F.json";
-import TreasuryArtifact from "/Users/HP/Desktop/FreedomProject/build/contracts/Treasury.json";
-import StakingArtifact from "/Users/HP/Desktop/FreedomProject/build/contracts/Staking.json";
+// frontend/src/lib/web3/abis.ts
+import FTokenArtifact from "../../../../build/contracts/F.json";
+import TreasuryArtifact from "../../../../build/contracts/Treasury.json";
+import StakingArtifact from "../../../../build/contracts/Staking.json";
+
+export { FTokenArtifact, TreasuryArtifact, StakingArtifact };
+
 
 
 // Wir exportieren nur die reinen ABIs zur Verwendung in der App.

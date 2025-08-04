@@ -1,29 +1,59 @@
-// frontend/src/lib/contracts.ts
+// frontend/src/lib/web3/contracts.ts
 
-// 1. Importiere die Artefakte aus dem lokalen, kopierten Ordner
+// 1. Importiere die Artefakte
 import FTokenArtifact from "@/lib/artifacts/F.json";
 import StakingArtifact from "@/lib/artifacts/Staking.json";
 import TreasuryArtifact from "@/lib/artifacts/Treasury.json";
 import RewardManagerArtifact from "@/lib/artifacts/RewardManager.json";
 
+// 2. Definiere die Netzwerk-ID
+const BscTestnetId = "97";
 
-// 2. Definiere die Netzwerk-ID für das BSC Testnet
-const bsctestnetId = '97';
+// Hilfstyp, um "as any" zu vermeiden
+type NetworkArtifacts = {
+  [networkId: string]: { address: string };
+};
 
-// --- ABIs ---
-// Daran ändert sich nichts
+// --- EINZELNE EXPORTE (TYPENSICHER) ---
+// Wir exportieren die ABIs und Adressen einzeln für Flexibilität
+export const fTokenAddress = (FTokenArtifact.networks as NetworkArtifacts)[
+  BscTestnetId
+]?.address as `0x${string}`;
+export const stakingAddress = (StakingArtifact.networks as NetworkArtifacts)[
+  BscTestnetId
+]?.address as `0x${string}`;
+export const treasuryAddress = (TreasuryArtifact.networks as NetworkArtifacts)[
+  BscTestnetId
+]?.address as `0x${string}`;
+export const rewardManagerAddress = (
+  RewardManagerArtifact.networks as NetworkArtifacts
+)[BscTestnetId]?.address as `0x${string}`;
+
 export const fTokenAbi = FTokenArtifact.abi;
 export const stakingAbi = StakingArtifact.abi;
 export const treasuryAbi = TreasuryArtifact.abi;
 export const rewardManagerAbi = RewardManagerArtifact.abi;
 
-// --- Adressen ---
-// Dieser Teil ist korrigiert, um den TypeScript-Fehler zu beheben
-export const fTokenAddress = (FTokenArtifact.networks as any)["bscTestnetId"]?.address as `0x${string}`;
-export const stakingAddress = (StakingArtifact.networks as any)["bscTestnetId"]?.address as `0x${string}`;
-export const treasuryAddress = (TreasuryArtifact.networks as any)["bscTestnetId"]?.address as `0x${string}`;
-export const rewardManagerAddress = (RewardManagerArtifact.networks as any)["bscTestnetId"]?.address as `0x${string}`;
+// --- TYPSICHERE KONFIGURATIONSOBJEKTE (DER SCHLÜSSEL ZUR LÖSUNG) ---
+// Wir erstellen hier NEUE OBJEKTE. Auf diese OBJEKT-LITERAL-Erstellung kann 'as const'
+// syntaktisch korrekt angewendet werden. Das gibt Wagmi die volle Typsicherheit.
 
+export const fTokenContractConfig = {
+  address: fTokenAddress,
+  abi: fTokenAbi,
+} as const;
+export const stakingContractConfig = {
+  address: stakingAddress,
+  abi: stakingAbi,
+} as const;
+export const treasuryContractConfig = {
+  address: treasuryAddress,
+  abi: treasuryAbi,
+} as const;
+export const rewardManagerContractConfig = {
+  address: rewardManagerAddress,
+  abi: rewardManagerAbi,
+} as const;
 
 // --- Validierungs-Check ---
 if (
@@ -32,7 +62,7 @@ if (
   !treasuryAddress ||
   !rewardManagerAddress
 ) {
-  console.error(
-    "Eine oder mehrere Vertragsadressen wurden nicht gefunden. Stelle sicher, dass ALLE Verträge auf dem BSC Testnet (ID 97) deployed und die `build/contracts`-Dateien aktuell sind."
+  throw new Error(
+    "Eine oder mehrere Vertragsadressen wurden nicht gefunden. Stellen Sie sicher, dass ALLE Verträge auf dem BSC Testnet (ID 97) deployed und die Artefakte aktuell sind."
   );
 }

@@ -59,7 +59,7 @@ function ClaimButton({ tokenId, listName }: ClaimButtonProps) {
       </button>
       {isConfirming && <p className="text-yellow-400 mt-2">Transaktion wird verarbeitet...</p>}
       {isConfirmed && <p className="text-green-400 mt-2">NFT erfolgreich geclaimed!</p>}
-      {error && <p className="text-red-400 mt-2">Fehler: {error.shortMessage}</p>}
+      {error && <p className="text-red-400 mt-2">Fehler: {error.message}</p>}
       {message && !isPending && <p className="text-gray-400 mt-2">{message}</p>}
     </div>
   );

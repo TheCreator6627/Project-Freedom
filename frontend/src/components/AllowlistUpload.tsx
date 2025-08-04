@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/src/context/AdminSession";
+import { useAuth } from "@/context/AdminSession"; // KORRIGIERT
 import { useState } from "react";
 
 export function AllowlistUpload() {

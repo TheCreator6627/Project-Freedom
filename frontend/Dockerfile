@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json* ./
 # 'npm ci' ist der Standard für reproduzierbare Builds und installiert auch devDependencies.
-RUN npm ci
+RUN npm install
 
 # =========================================================================
 # STAGE 2: Builder

@@ -18,11 +18,12 @@
     "jsx": "preserve",
     "incremental": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["*"],
+      "@web3/*": ["lib/web3/*"],
+      "@artifacts/*": ["artifacts/*"],
+      "@components/*": ["components/*"]
     },
     "plugins": [
       {

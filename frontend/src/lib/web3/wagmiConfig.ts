@@ -1,6 +1,6 @@
 // frontend/lib/web3/wagmiConfig.ts
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { bscTestnet } from "wagmi/chains"; // BNB Testnet
+import { bscTestnet } from "wagmi/chains"; // BNB Testnet 8585 // 
 
 const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
 

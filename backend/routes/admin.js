@@ -6,7 +6,7 @@ const stream = require("stream");
 const logger = require("../utils/logger");
 const { protectAdmin } = require("../middleware/auth");
 const { snapshotQueue } = require("../jobs/queue");
-const MerkleRoot = require("../models/merkleRoot");
+const MerkleRoot = require("../models/MerkleRoot");
 
 const upload = multer({ storage: multer.memoryStorage() });
 

@@ -1,9 +1,54 @@
 {
   "compilerOptions": {
-    "target": "es2020", "module": "commonjs", "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true, "strict": true,
-    "skipLibCheck": true, "resolveJsonModule": true
+    /* Typüberprüfung */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    /* Modul-Konfiguration */
+    "target": "es2020",
+    "module": "commonjs",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    /* Ausgabe-Konfiguration */
+    "outDir": "./dist",
+    "sourceMap": true,
+    /* Pfad-Konfiguration */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./frontend/src/*"
+      ],
+      "@backend/*": [
+        "./backend/*"
+      ]
+    }
   },
-  "include": ["scripts", "test"],
-  "files": ["hardhat.config.ts"]
+  "include": [
+    "backend/**/*.ts",
+    "frontend/**/*.ts",
+    "contracts/**/*.ts",
+    "test/**/*.ts",
+    "scripts/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "artifacts",
+    "cache",
+    "build",
+    ".next"
+  ]
 }

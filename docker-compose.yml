@@ -31,7 +31,7 @@ services:
       - backend
 
   mongodb:
-    image: mongo:6.0
+    image: mongo:latest
     container_name: freedom_mongodb
     restart: unless-stopped
     env_file: ./.env

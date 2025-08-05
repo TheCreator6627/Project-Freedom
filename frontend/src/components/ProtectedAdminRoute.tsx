@@ -1,34 +1,37 @@
 // frontend/components/ProtectedAdminRoute.tsx
 "use client";
 
-import { useAuth } from "@/context/AdminSession"; // KORRIGIERTER IMPORT
+import { useAuth } from "@/src/context/AdminSession";
 import { useEffect, useState } from "react";
-import React from 'react';
+import { useRouter } from 'next/navigation';
 
-// NUR DIESE EINE DEFINITION BEHALTEN
 export function ProtectedAdminRoute({ children }: { children: React.ReactNode }) {
-  const { token, isLoading } = useAuth(); // isLoading hinzugefügt für besseres Handling
-  const [isClient, setIsClient] = useState(false);
+  const { user, isLoading } = useAuth(); // useAuth wird aus dem Context geladen
+  const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-  // Zeige nichts, solange der Lade-Check (aus AdminSession) oder die Client-Side-Prüfung läuft
-  if (isLoading || !isClient) {
-    return null; // oder ein Lade-Spinner
-  }
+  // Zeige einen Ladezustand, solange die Authentifizierung geprüft wird
+  if (isLoading || !isClient) {
+    return <div>Lade...</div>; // Verbesserter visueller Hinweis
+  }
 
-  // Wenn der Lade-Check fertig ist und ein Token da ist, zeige den Inhalt an
-  if (token) {
-    return <>{children}</>;
-  }
+  // Wenn der Benutzer ein Admin ist, rendern wir die Kinderkomponenten
+  if (user && user.isAdmin) {
+    return <>{children}</>;
+  }
 
-  // Wenn kein Token da ist, zeige die "Zugriff verweigert"-Nachricht
-  return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <h1>Zugriff verweigert</h1>
-      <p>Bitte mit einem Admin-Wallet verbinden, um diese Seite zu sehen.</p>
-    </div>
-  );
+  // Andernfalls leiten wir den Benutzer zur Anmeldeseite weiter
+  // Das `useEffect` stellt sicher, dass dies nur clientseitig passiert
+  useEffect(() => {
+    if (isClient && !isLoading && (!user || !user.isAdmin)) {
+      router.push('/login'); // Annahme, dass es eine Login-Seite gibt
+    }
+  }, [user, isLoading, isClient, router]);
+
+  // Lade-Fallback für den Fall, dass eine Weiterleitung unmittelbar bevorsteht
+  return <div>Zugriff verweigert. Weiterleitung...</div>;
 }

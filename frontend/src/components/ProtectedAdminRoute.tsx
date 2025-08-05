@@ -1,7 +1,7 @@
 // frontend/components/ProtectedAdminRoute.tsx
 "use client";
 
-import { useAuth } from "@/src/context/AdminSession";
+import { useAuth } from "@/context/AdminSession";
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 

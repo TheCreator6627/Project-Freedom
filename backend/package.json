@@ -1,46 +1,36 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Backend for FreedonProject",
+  "private": true,
+  "description": "Backend server for the Freedom Project",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "build": "npm install",
     "contracts:generate": "node scripts/generateContractInfo.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
-    "@types/chai": "^4.3.20",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^24.1.0",
-    "@types/node-cron": "^3.0.11",
-    "@types/react": "^19.1.9",
-    "chai": "^4.5.0",
-    "ethers": "^6.15.0",
-    "hardhat": "^2.26.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0",
-    "@tanstack/react-query": "^5.83.1",
     "alchemy-sdk": "^3.6.2",
     "bullmq": "^5.56.9",
     "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.5.2",
-    "mongodb": "^6.18.0",
     "mongoose": "^8.17.0",
-    "multer": "^2.0.2",
+    "multer": "^1.4.5-lts.1",
     "node-cron": "^4.2.1",
-    "pino": "^9.7.0",
-    "pino-pretty": "^13.1.1",
-    "viem": "^2.33.2",
-    "wagmi": "^2.16.0"
-  }
+    "pino": "^9.7.0"
+  },
+  "devDependencies": {
+    "@types/node-cron": "^3.0.11",
+    "pino-pretty": "^13.1.1"
+  },
+  "author": "",
+  "license": "ISC"
 }

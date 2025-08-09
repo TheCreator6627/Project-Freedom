@@ -1,32 +1,50 @@
-// backend/routes/auth.js
-
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { protectAdmin } = require("../middleware/auth");
+const logger = require("../utils/logger"); // Importiere den Pino-Logger
 
-// Definiere Admin-Wallets in Kleinbuchstaben
-const adminWallets = ["0x311d4adb2004ccefdb9e39acff59c7b5e4949c2a"];
+// Lese die Admin-Wallet-Adresse sicher aus den Umgebungsvariablen.
+// Dies ist die einzige Stelle, an der diese Konfiguration vorgenommen wird.
+const ADMIN_WALLET_ADDRESS = process.env.ADMIN_WALLET_ADDRESS?.toLowerCase();
 
-// @route   POST api/auth/login
-// @desc    Einloggen oder neuen Benutzer registrieren
+// Einmalige Warnung beim Serverstart, falls die Admin-Adresse nicht konfiguriert ist.
+if (!ADMIN_WALLET_ADDRESS) {
+  logger.warn(
+    "Sicherheitswarnung: ADMIN_WALLET_ADDRESS ist in der .env-Datei nicht gesetzt. Es können sich keine Admins einloggen."
+  );
+}
+
+/**
+ * @route   POST /api/auth/login
+ * @desc    Loggt einen Benutzer ein oder registriert ihn. Wenn die Adresse eine Admin-Adresse ist, wird ein JWT ausgestellt.
+ * @access  Public
+ */
 router.post("/login", async (req, res) => {
   const { walletAddress } = req.body;
-  if (!walletAddress) {
-    return res.status(400).json({ msg: "Wallet-Adresse fehlt" });
+
+  if (!walletAddress || typeof walletAddress !== "string") {
+    return res
+      .status(400)
+      .json({ msg: "Ungültige oder fehlende Wallet-Adresse." });
   }
 
+  const lowerCaseAddress = walletAddress.toLowerCase();
+
   try {
-    const lowerCaseAddress = walletAddress.toLowerCase();
     let user = await User.findOne({ walletAddress: lowerCaseAddress });
 
     if (!user) {
+      logger.info(`Neuer Benutzer wird erstellt: ${lowerCaseAddress}`);
       user = new User({ walletAddress: lowerCaseAddress });
       await user.save();
+    } else {
+      logger.info(`Bestehender Benutzer gefunden: ${lowerCaseAddress}`);
     }
 
-    if (adminWallets.includes(lowerCaseAddress)) {
+    // Prüfe, ob der Benutzer ein Admin ist.
+    if (ADMIN_WALLET_ADDRESS && lowerCaseAddress === ADMIN_WALLET_ADDRESS) {
       const payload = {
         user: {
           id: user.id,
@@ -34,36 +52,54 @@ router.post("/login", async (req, res) => {
           isAdmin: true,
         },
       };
+
+      // Signiere das Token mit dem geheimen Schlüssel aus der .env-Datei.
       jwt.sign(
         payload,
         process.env.JWT_SECRET,
-        { expiresIn: "1d" },
+        { expiresIn: "1d" }, // Token ist einen Tag gültig
         (err, token) => {
-          if (err) throw err;
-          return res.json({ msg: "Admin erfolgreich eingeloggt", token, user });
+          if (err) throw err; // Übergibt den Fehler an den catch-Block
+          logger.info(`Admin-Login erfolgreich für: ${lowerCaseAddress}`);
+          return res
+            .status(200)
+            .json({ msg: "Admin erfolgreich eingeloggt", token, user });
         }
       );
     } else {
-      return res.json({ msg: "Benutzer erfolgreich eingeloggt", user });
+      // Normaler Benutzer-Login
+      return res
+        .status(200)
+        .json({ msg: "Benutzer erfolgreich eingeloggt", user });
     }
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Server-Fehler");
+    logger.error(err, `Fehler bei der Login-Anfrage für ${walletAddress}`);
+    // Sende eine generische Fehlermeldung, um keine internen Details preiszugeben.
+    res.status(500).send("Ein interner Server-Fehler ist aufgetreten.");
   }
 });
 
-// @route   GET api/auth/me
-// @desc    Gibt den eingeloggten Benutzer basierend auf dem Token zurück
+/**
+ * @route   GET /api/auth/me
+ * @desc    Gibt die Daten des aktuell eingeloggten Admin-Benutzers zurück, basierend auf einem gültigen Token.
+ * @access  Private (geschützt durch protectAdmin Middleware)
+ */
 router.get("/me", protectAdmin, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    // Die Middleware 'protectAdmin' hat bereits sichergestellt, dass req.user existiert.
+    const user = await User.findById(req.user.id).select("-__v"); // Das Feld __v ausschließen
+
     if (!user) {
-      return res.status(404).json({ msg: "Benutzer nicht gefunden" });
+      logger.warn(
+        `Benutzer mit ID ${req.user.id} aus gültigem Token nicht in DB gefunden.`
+      );
+      return res.status(404).json({ msg: "Benutzer nicht gefunden." });
     }
-    res.json(user);
+
+    res.status(200).json(user);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Server-Fehler");
+    logger.error(err, `Fehler bei der /me Anfrage für User-ID ${req.user.id}`);
+    res.status(500).send("Ein interner Server-Fehler ist aufgetreten.");
   }
 });
 

@@ -1,43 +1,37 @@
 {
   "compilerOptions": {
-    "target": "ES2020", // nötig für BigInt (z.B. 0n)
     "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ES2020"
-    ], // moderne JS + Browser-APIs
-    "module": "ESNext",
-    "moduleResolution": "bundler", // für Vite/RSC/Next.js optimal
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": "src",
-    "paths": {
-      "@/*": ["*"],
-      "@web3/*": ["lib/web3/*"],
-      "@artifacts/*": ["artifacts/*"],
-      "@components/*": ["components/*"]
-    },
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "next.config.js",
-    "globals.d.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

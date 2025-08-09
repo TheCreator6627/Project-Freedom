@@ -3,7 +3,7 @@
 **/.next
 **/build
 **/dist
-.dockerignore
+
 
 
 .env

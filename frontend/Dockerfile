@@ -1,48 +1,51 @@
-# =========================================================================
-# STAGE 1: Dependencies
-# Installiert alle nötigen Pakete basierend auf der Lock-Datei.
-# =========================================================================
-FROM node:24-alpine AS deps
+# === Phase 1: Die Build-Phase ===
+# Wir verwenden ein schlankes Node-Image zum Erstellen der Anwendung.
+FROM node:22-alpine AS builder
+
+# Festlegen des Arbeitsverzeichnisses im Container
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-# 'npm ci' ist der Standard für reproduzierbare Builds und installiert auch devDependencies.
-RUN npm install
+# Kopieren der 'package.json' und 'package-lock.json' vor dem Installieren der Abhängigkeiten.
+# Dies nutzt das Docker-Layer-Caching, um `npm ci` zu überspringen, wenn sich die Abhängigkeiten nicht geändert haben.
+COPY frontend/package*.json ./
 
-# =========================================================================
-# STAGE 2: Builder
-# Baut die Next.js-Anwendung im optimierten Produktionsmodus.
-# =========================================================================
-FROM node:24-alpine AS builder
-WORKDIR /app
+# Installieren der Frontend-Abhängigkeiten
+# 'npm ci' ist der Standard für reproduzierbare Builds und installiert auch devDependencies für den Build-Schritt.
+RUN npm ci
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Kopieren der restlichen Projektdateien
+COPY frontend/ .
 
-# 'npm run build' läuft standardmäßig korrekt für die Produktion.
-# Ein explizites 'ENV NODE_ENV' ist hier nicht nötig und vermeidet Warnungen.
+# Erstellen des Produktions-Builds
 RUN npm run build
 
-# =========================================================================
-# STAGE 3: Production Runner
-# Erstellt das minimale, sichere Image für den Live-Betrieb.
-# =========================================================================
-FROM node:24-alpine AS runner
+
+# === Phase 2: Die Produktions-Phase (finales Image) ===
+# Wir verwenden ein noch schlankeres Image ohne Build-Tools für die Produktion.
+FROM node:22-alpine AS runner
+
+# Festlegen des Arbeitsverzeichnisses
 WORKDIR /app
 
-# Hier wird die Umgebung explizit auf 'production' gesetzt.
-ENV NODE_ENV=production
-ENV PORT=3000
+# Kopieren der minimal erforderlichen Dateien aus der Build-Phase
+# 1. package.json für den Startbefehl
+COPY --from=builder /app/package.json ./package.json
 
-RUN addgroup --system --gid 1001 nodejs \
-    && adduser --system --uid 1001 nextjs
+# 2. Produktionsabhängigkeiten
+# Wir kopieren nur die Pakete, die für die Laufzeit notwendig sind.
+RUN npm install --omit=dev
 
-# Kopiere NUR die für den Betrieb notwendigen Dateien aus dem Builder.
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+# 3. Der fertige Next.js-Build
+COPY --from=builder /app/.next ./.next
 
-USER nextjs
+# 4. Statische Dateien und der öffentliche Ordner
+COPY --from=builder /app/public ./public
+
+# Setzen der Umgebung für die Produktion
+ENV NODE_ENV production
+
+# Exponieren des Ports, auf dem Next.js läuft
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+# Starten der Anwendung in der Produktion
+CMD ["npm", "run", "start"]
